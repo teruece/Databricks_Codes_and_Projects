@@ -1,0 +1,12 @@
+# Databricks notebook source
+
+# Load transformed data
+transformed_data_path = "/mnt/delta/transformed_data/"
+df_transformed = spark.read.format("delta").load(transformed_data_path)
+
+# Write to a final table for analytics
+final_table_path = "/mnt/delta/final_table/"
+df_transformed.write.format("delta").mode("overwrite").save(final_table_path)
+
+# Optionally register as a table for Databricks SQL
+spark.sql("CREATE TABLE IF NOT EXISTS final_table USING DELTA LOCATION '/mnt/delta/final_table/'")
