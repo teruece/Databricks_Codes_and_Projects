@@ -1,0 +1,20 @@
+# Databricks notebook source
+
+# Load Delta Lake raw data
+raw_data_path = "/mnt/delta/raw_data/"
+df_raw = spark.read.format("delta").load(raw_data_path)
+
+# Apply transformations
+df_transformed = (
+    df_raw
+    .withColumn("new_col", lit("transformed"))
+    .withColumnRenamed("old_col", "renamed_col")
+    .filter(col("column_to_filter") > 100)
+)
+
+# Display transformed data
+display(df_transformed)
+
+# Save transformed data to Delta Lake
+transformed_data_path = "/mnt/delta/transformed_data/"
+df_transformed.write.format("delta").mode("overwrite").save(transformed_data_path)
