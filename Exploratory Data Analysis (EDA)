@@ -1,0 +1,17 @@
+# Databricks Notebook Code
+
+# Load a sample dataset
+file_path = "/databricks-datasets/COVID/covid-19-data/us_states.csv"
+covid_data = spark.read.format("csv").option("header", "true").load(file_path)
+
+# Display the first few rows
+display(covid_data)
+
+# Descriptive statistics
+covid_data.describe().show()
+
+# Filter data for a specific state
+ny_data = covid_data.filter(col("state") == "New York")
+
+# Visualize trends using Databricks built-in visualization
+display(ny_data)
