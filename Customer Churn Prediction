@@ -1,0 +1,9 @@
+├── data
+├── notebooks
+│   ├── eda.ipynb
+│   ├── feature_engineering.ipynb
+│   ├── model_training.ipynb
+│   ├── dashboard_creation.ipynb
+├── src
+│   ├── churn_prediction.py
+└── README.md
