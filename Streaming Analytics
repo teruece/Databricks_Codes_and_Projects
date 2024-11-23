@@ -1,0 +1,18 @@
+# Databricks Notebook Code
+
+from pyspark.sql.types import StructType, StringType, TimestampType
+
+# 1. Define Schema for Streaming Data
+schema = StructType().add("timestamp", TimestampType()) \
+                     .add("user_id", StringType()) \
+                     .add("action", StringType())
+
+# 2. Read Streaming Data from a Source (e.g., Kafka or a file directory)
+stream_data = spark.readStream.format("csv").schema(schema).load("/mnt/streaming-data/")
+
+# 3. Perform Aggregation
+agg_stream = stream_data.groupBy("action").count()
+
+# 4. Write Stream to Console in Real-Time
+query = agg_stream.writeStream.outputMode("complete").format("console").start()
+query.awaitTermination()
