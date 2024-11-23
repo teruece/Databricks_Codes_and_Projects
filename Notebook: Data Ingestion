@@ -1,0 +1,19 @@
+# Databricks notebook source
+
+# Load necessary libraries
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+
+# Initialize SparkSession (in Databricks, this is preconfigured)
+spark = SparkSession.builder.appName("ETL Pipeline").getOrCreate()
+
+# Load data
+input_path = "/dbfs/mnt/input_data.csv"  # Change to your input path
+df = spark.read.csv(input_path, header=True, inferSchema=True)
+
+# Display sample data
+display(df)
+
+# Save raw data to Delta Lake
+raw_data_path = "/mnt/delta/raw_data/"
+df.write.format("delta").mode("overwrite").save(raw_data_path)
