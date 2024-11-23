@@ -1,0 +1,8 @@
+├── data
+├── notebooks
+│   ├── data_processing.ipynb
+│   ├── rfm_analysis.ipynb
+│   ├── visualization.ipynb
+├── src
+│   ├── analytics_pipeline.py
+└── README.md
