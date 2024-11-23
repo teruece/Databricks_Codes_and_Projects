@@ -1,0 +1,32 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+
+def ingest_data(spark, input_path, output_path):
+    df = spark.read.csv(input_path, header=True, inferSchema=True)
+    df.write.format("delta").mode("overwrite").save(output_path)
+
+def transform_data(spark, input_path, output_path):
+    df = spark.read.format("delta").load(input_path)
+    df_transformed = (
+        df
+        .withColumn("new_col", lit("transformed"))
+        .filter(col("column_to_filter") > 100)
+    )
+    df_transformed.write.format("delta").mode("overwrite").save(output_path)
+
+def load_data(spark, input_path, output_path):
+    df = spark.read.format("delta").load(input_path)
+    df.write.format("delta").mode("overwrite").save(output_path)
+
+if __name__ == "__main__":
+    spark = SparkSession.builder.appName("ETL Pipeline").getOrCreate()
+
+    # Paths
+    raw_data_path = "/mnt/delta/raw_data/"
+    transformed_data_path = "/mnt/delta/transformed_data/"
+    final_table_path = "/mnt/delta/final_table/"
+
+    # Pipeline execution
+    ingest_data(spark, "/dbfs/mnt/input_data.csv", raw_data_path)
+    transform_data(spark, raw_data_path, transformed_data_path)
+    load_data(spark, transformed_data_path, final_table_path)
