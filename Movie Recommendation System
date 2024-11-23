@@ -1,0 +1,23 @@
+# Databricks Notebook Code
+
+from pyspark.ml.recommendation import ALS
+
+# 1. Load Movie Ratings Dataset
+file_path = "/databricks-datasets/movielens/ml-latest-small/ratings.csv"
+ratings_df = spark.read.format("csv").option("header", "true").load(file_path)
+
+# 2. Transform Data Types
+ratings_df = ratings_df.withColumn("userId", col("userId").cast("integer")) \
+                       .withColumn("movieId", col("movieId").cast("integer")) \
+                       .withColumn("rating", col("rating").cast("float"))
+
+# 3. Train-Test Split
+train_data, test_data = ratings_df.randomSplit([0.8, 0.2], seed=42)
+
+# 4. Train ALS Model
+als = ALS(maxIter=10, regParam=0.1, userCol="userId", itemCol="movieId", ratingCol="rating", coldStartStrategy="drop")
+model = als.fit(train_data)
+
+# 5. Generate Recommendations for a User
+user_recommendations = model.recommendForAllUsers(5)
+user_recommendations.show()
