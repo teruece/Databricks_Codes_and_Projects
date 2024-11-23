@@ -1,0 +1,21 @@
+# Databricks Notebook Code
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, to_date
+
+# 1. Load CSV Data
+file_path = "/databricks-datasets/airlines/part-00000"
+df = spark.read.format("csv").option("header", "true").load(file_path)
+
+# 2. Inspect the Data
+df.show(5)
+
+# 3. Clean and Transform Data
+cleaned_df = df.withColumnRenamed("Year", "FlightYear") \
+               .withColumn("FlightDate", to_date(col("FlightDate"), "yyyy-MM-dd"))
+
+# 4. Save Transformed Data to Parquet
+output_path = "/mnt/datalake/cleaned_airlines"
+cleaned_df.write.format("parquet").mode("overwrite").save(output_path)
+
+print("ETL pipeline completed and saved data to:", output_path)
