@@ -1,0 +1,1 @@
+This repository contains a collection of Databricks notebooks, scripts, and project templates developed for data engineering, data analysis, and machine learning workflows using the Databricks Unified Analytics Platform.
